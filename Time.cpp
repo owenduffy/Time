@@ -259,13 +259,15 @@ time_t now() {
   }
   if (nextSyncTime <= sysTime) {
     if (getTimePtr != 0) {
-      time_t t = getTimePtr();
+     time_t t = getTimePtr();
       if (t != 0) {
         setTime(t);
+        Status = timeSet;
       } else {
         nextSyncTime = sysTime + syncInterval;
-        Status = (Status == timeNotSet) ?  timeNotSet : timeNeedsSync;
       }
+    } else {
+      Status = (Status == timeSet) ?  timeNotSet : timeNeedsSync;
     }
   }  
   return (time_t)sysTime;
@@ -279,7 +281,7 @@ void setTime(time_t t) {
 
   sysTime = (uint32_t)t;  
   nextSyncTime = (uint32_t)t + syncInterval;
-  Status = timeSet;
+//  Status = timeSet;
   prevMillis = millis();  // restart counting from now (thanks to Korman for this fix)
 } 
 
